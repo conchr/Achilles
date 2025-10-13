@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Κουίζ: Η Αχίλλειος Κληρονομιά των Φαρσάλων</title>
+    <!-- Φόρτωση Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ρυθμίσεις Tailwind για προσαρμοσμένο θέμα -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1E3A8A', // Σκούρο Μπλε
+                        'secondary-gold': '#FBBF24', // Χρυσό
+                        'tertiary-red': '#DC2626', // Κόκκινο (για λάθος)
+                        'success-green': '#10B981', // Πράσινο (για σωστό)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Προσαρμοσμένες κλάσεις για το κουίζ */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #E0F2F1, #B2DFDB); /* Απαλή διαβάθμιση φόντου */
+        }
+        .quiz-container {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+        .answer-button {
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        .answer-button:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .correct {
+            background-color: #10B981 !important; /* success-green */
+            color: white !important;
+            border-color: #059669 !important;
+        }
+        .wrong {
+            background-color: #DC2626 !important; /* tertiary-red */
+            color: white !important;
+            border-color: #B91C1C !important;
+        }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .score-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 flex items-center justify-center min-h-screen">
+
+    <div id="quiz-app" class="quiz-container w-full max-w-xl bg-white p-6 md:p-10 rounded-xl">
+        
+        <!-- Τίτλος -->
+        <h1 class="text-3xl md:text-4xl font-bold text-primary-blue text-center mb-6 border-b-2 border-secondary-gold pb-3">
+            Κουίζ: Η Αχίλλειος Κληρονομιά
+        </h1>
+
+        <!-- Πίνακας Παιχνιδιού (Game Container) -->
+        <div id="game-container">
+            
+            <!-- Εμφάνιση Ερώτησης και Δείκτη -->
+            <div class="mb-6">
+                <p id="question-index" class="text-sm font-medium text-gray-500 mb-2"></p>
+                <div id="question-text" class="text-xl font-semibold text-gray-800 p-4 bg-gray-50 rounded-lg shadow-inner">
+                    <!-- Το κείμενο της ερώτησης θα εισαχθεί εδώ -->
+                </div>
+            </div>
+
+            <!-- Επιλογές Απάντησης -->
+            <div id="choices-container" class="grid grid-cols-1 gap-3">
+                <!-- Τα κουμπιά επιλογών θα εισαχθούν εδώ -->
+            </div>
+
+            <!-- Μήνυμα Σωστού/Λάθους -->
+            <div id="feedback-message" class="mt-4 text-center font-bold h-6">
+                <!-- Εδώ εμφανίζεται το μήνυμα επιβεβαίωσης -->
+            </div>
+
+            <!-- Κουμπί Επόμενης Ερώτησης -->
+            <button id="next-button" onclick="nextQuestion()" class="w-full mt-6 py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50" disabled>
+                Επόμενη Ερώτηση &raquo;
+            </button>
+
+        </div>
+
+        <!-- Οθόνη Αποτελεσμάτων -->
+        <div id="results-container" class="hidden text-center p-6 bg-gray-50 rounded-lg">
+            <h2 class="text-3xl font-extrabold text-primary-blue mb-4">Τα Αποτελέσματα σου!</h2>
+            <p class="text-6xl font-black text-secondary-gold score-shadow" id="final-score"></p>
+            <p class="text-xl text-gray-700 mt-2" id="score-text"></p>
+            <button onclick="startGame()" class="w-full mt-6 py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600">
+                Ξανά Δοκιμή!
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Δεδομένα Κουίζ
+        const questions = [
+            {
+                q: "1. Πώς ονομαζόταν στην Ομηρική εποχή η περιοχή που θεωρείται πρόγονος των Φαρσάλων;",
+                choices: ["Ιωλκός", "Φθία", "Πελασγιώτιδα"],
+                answer: "Φθία"
+            },
+            {
+                q: "2. Ποιος ήταν ο θνητός πατέρας του Αχιλλέα, Βασιλιάς των Μυρμιδόνων;",
+                choices: ["Οδυσσέας", "Πηλέας", "Αγαμέμνων"],
+                answer: "Πηλέας"
+            },
+            {
+                q: "3. Ποια ήταν η θεά της θάλασσας και μητέρα του Αχιλλέα;",
+                choices: ["Αθηνά", "Ήρα", "Θέτιδα"],
+                answer: "Θέτιδα"
+            },
+            {
+                q: "4. Πώς ονομάζονταν οι πιστοί πολεμιστές του Αχιλλέα που τον ακολούθησαν στην Τροία;",
+                choices: ["Λοκροί", "Μυρμιδόνες", "Αργοναύτες"],
+                answer: "Μυρμιδόνες"
+            },
+            {
+                q: "5. Σύμφωνα με τον μύθο, από ποια πλάσματα μεταμορφώθηκαν οι Μυρμιδόνες από τον Δία σε πολεμιστές;",
+                choices: ["Μέλισσες", "Μυρμήγκια", "Σκύλους"],
+                answer: "Μυρμήγκια"
+            },
+            {
+                q: "6. Ποιο ήταν το μοναδικό τρωτό σημείο του Αχιλλέα, το οποίο τιμάται με γλυπτό στα Φάρσαλα;",
+                choices: ["Ο λαιμός", "Το γόνατο", "Η φτέρνα (Αχίλλειος Πτέρνα)"],
+                answer: "Η φτέρνα (Αχίλλειος Πτέρνα)"
+            },
+            {
+                q: "7. Ποιος ήταν ο σοφός Κένταυρος που ανέλαβε τη διαπαιδαγώγηση του Αχιλλέα;",
+                choices: ["Νέσσος", "Χείρωνας", "Φόλος"],
+                answer: "Χείρωνας"
+            },
+            {
+                q: "8. Σε ποια ευρύτερη γεωγραφική περιοχή της Ελλάδας ανήκουν τα Φάρσαλα και η Φθία;",
+                choices: ["Πελοπόννησος", "Μακεδονία", "Θεσσαλία"],
+                answer: "Θεσσαλία"
+            },
+            {
+                q: "9. Πώς ονομάζεται το ιερό (ναός) που ήταν αφιερωμένο στη μητέρα του Αχιλλέα, τη Θέτιδα, κοντά στα Φάρσαλα;",
+                choices: ["Ηραίον", "Θετίδειον", "Αχίλλειον"],
+                answer: "Θετίδειον"
+            },
+            {
+                q: "10. Εκτός από τον Αχιλλέα, ποιον άλλον ήρωα τιμούσαν με λατρείες και αγώνες στα αρχαία Φάρσαλα;",
+                choices: ["τον Έκτορα", "τον Πάτροκλο", "τον Ποσειδώνα"],
+                answer: "τον Πάτροκλο"
+            },
+            {
+                q: "11. Ποιο μνημείο βρίσκεται στις πηγές του ποταμού Απιδανού στα Φάρσαλα;",
+                choices: ["Το άγαλμα του Πατρόκλου", "Το γλυπτό της Θέτιδας με τον βρέφος Αχιλλέα", "Το άγαλμα του Δία"],
+                answer: "Το γλυπτό της Θέτιδας με τον βρέφος Αχιλλέα"
+            },
+            {
+                q: "12. Σε ποιο σημείο της σύγχρονης πόλης των Φαρσάλων βρίσκεται το κυρίως άγαλμα του Αχιλλέα;",
+                choices: ["Στην είσοδο του αρχαιολογικού χώρου", "Στον λόφο του Προφήτη Ηλία", "Στην πλατεία του Δημαρχείου"],
+                answer: "Στην πλατεία του Δημαρχείου"
+            },
+            {
+                q: "13. Τι συμβολίζει το γλυπτό του μυρμηγκιού με δόρυ και ασπίδα στην είσοδο της πόλης;",
+                choices: ["Την αγροτική παραγωγή", "Τους Μυρμιδόνες", "Την εργατικότητα των κατοίκων"],
+                answer: "Τους Μυρμιδόνες"
+            },
+            {
+                q: "14. Ποιο από τα παρακάτω αρχαιολογικά ευρήματα υποδηλώνει τη σύνδεση των Φαρσαλιωτών με την Αχίλλεια κληρονομιά;",
+                choices: ["Μυκηναϊκοί/Αρχαϊκοί τάφοι και κτερίσματα", "Ρωμαϊκά ψηφιδωτά", "Βυζαντινές εκκλησίες"],
+                answer: "Μυκηναϊκοί/Αρχαϊκοί τάφοι και κτερίσματα"
+            },
+            {
+                q: "15. Πώς ονομάζεται η ομάδα φιλάθλων του τοπικού αθλητικού συλλόγου «Αχιλλέας Φαρσάλων»;",
+                choices: ["Οι Αχαιοί", "Οι Θεσσαλοί", "Οι Μυρμιδόνες"],
+                answer: "Οι Μυρμιδόνες"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // Στοιχεία DOM
+        const gameContainer = document.getElementById('game-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionIndexElement = document.getElementById('question-index');
+        const questionTextElement = document.getElementById('question-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const feedbackMessageElement = document.getElementById('feedback-message');
+        const nextButton = document.getElementById('next-button');
+        const finalScoreElement = document.getElementById('final-score');
+        const scoreTextElement = document.getElementById('score-text');
+
+        /**
+         * Εκκινεί το παιχνίδι, αρχικοποιώντας το σκορ και τον δείκτη ερωτήσεων.
+         */
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            gameContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            displayQuestion();
+        }
+
+        /**
+         * Εμφανίζει την τρέχουσα ερώτηση και τις επιλογές.
+         */
+        function displayQuestion() {
+            answered = false;
+            nextButton.disabled = true;
+            feedbackMessageElement.textContent = '';
+            choicesContainer.innerHTML = '';
+
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const currentQ = questions[currentQuestionIndex];
+            
+            questionIndexElement.textContent = `Ερώτηση ${currentQuestionIndex + 1} / ${questions.length}`;
+            questionTextElement.textContent = currentQ.q;
+
+            currentQ.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.className = 'answer-button w-full py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium text-lg hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold';
+                button.onclick = () => checkAnswer(choice, button);
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        /**
+         * Ελέγχει την απάντηση, ενημερώνει το σκορ και εμφανίζει τα αποτελέσματα.
+         * @param {string} selectedChoice - Η επιλογή που έκανε ο χρήστης.
+         * @param {HTMLElement} selectedButton - Το κουμπί που πάτησε ο χρήστης.
+         */
+        function checkAnswer(selectedChoice, selectedButton) {
+            if (answered) return;
+            answered = true;
+
+            const currentQ = questions[currentQuestionIndex];
+            const isCorrect = selectedChoice === currentQ.answer;
+
+            // Ενεργοποίηση του κουμπιού Επόμενης Ερώτησης
+            nextButton.disabled = false;
+
+            // Απενεργοποίηση όλων των κουμπιών επιλογών
+            Array.from(choicesContainer.children).forEach(btn => btn.classList.add('disabled'));
+
+            if (isCorrect) {
+                score++;
+                selectedButton.classList.add('correct');
+                feedbackMessageElement.textContent = 'Σωστά! Μπράβο!';
+                feedbackMessageElement.classList.remove('text-tertiary-red');
+                feedbackMessageElement.classList.add('text-success-green');
+            } else {
+                selectedButton.classList.add('wrong');
+                feedbackMessageElement.textContent = 'Λάθος. Η σωστή απάντηση είναι: ' + currentQ.answer;
+                feedbackMessageElement.classList.remove('text-success-green');
+                feedbackMessageElement.classList.add('text-tertiary-red');
+                
+                // Εμφάνιση της σωστής απάντησης
+                Array.from(choicesContainer.children).forEach(btn => {
+                    if (btn.textContent === currentQ.answer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+        }
+
+        /**
+         * Μεταβαίνει στην επόμενη ερώτηση ή στα αποτελέσματα.
+         */
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        /**
+         * Εμφανίζει την οθόνη αποτελεσμάτων.
+         */
+        function showResults() {
+            gameContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            const totalQuestions = questions.length;
+            finalScoreElement.textContent = `${score}/${totalQuestions}`;
+
+            let message = '';
+            const percentage = (score / totalQuestions) * 100;
+
+            if (percentage === 100) {
+                message = "Φοβερό! Είσαι ειδικός στην Αχίλλεια κληρονομιά των Φαρσάλων!";
+            } else if (percentage >= 70) {
+                message = "Πολύ καλά! Έχεις άριστη γνώση του θέματος.";
+            } else if (percentage >= 40) {
+                message = "Καλό αποτέλεσμα! Μερική επανάληψη της παρουσίασης θα βοηθήσει.";
+            } else {
+                message = "Χρειάζεται λίγη μελέτη ακόμα. Διάβασε ξανά την παρουσίαση!";
+            }
+            scoreTextElement.textContent = message;
+        }
+
+        // Έναρξη του παιχνιδιού με τη φόρτωση της σελίδας
+        window.onload = startGame;
+    </script>
+</body>
+</html>
