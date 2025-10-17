@@ -19,6 +19,9 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                    },
+                    screens: {
+                        'tv': '1920px', // Smart TV support
                     }
                 }
             }
@@ -29,10 +32,14 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #E0F2F1, #B2DFDB); /* Απαλή διαβάθμιση φόντου */
+            min-height: 100vh;
         }
         .quiz-container {
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease-in-out;
+            width: 95%;
+            max-width: 1200px;
+            margin: 1rem auto;
         }
         .answer-button {
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
@@ -58,54 +65,146 @@
         .score-shadow {
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
+        
+        /* Βελτιστοποίηση για smartphones */
+        @media (max-width: 640px) {
+            .quiz-container {
+                padding: 1rem;
+                margin: 0.5rem;
+                width: calc(100% - 1rem);
+            }
+            .mobile-padding {
+                padding: 0.75rem;
+            }
+            .mobile-text {
+                font-size: 1.125rem;
+            }
+            .mobile-title {
+                font-size: 1.75rem;
+            }
+        }
+        
+        /* Βελτιστοποίηση για tablets */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .quiz-container {
+                padding: 1.5rem;
+                max-width: 800px;
+            }
+            .tablet-text {
+                font-size: 1.25rem;
+            }
+            .tablet-title {
+                font-size: 2.25rem;
+            }
+        }
+        
+        /* Βελτιστοποίηση για laptops */
+        @media (min-width: 1025px) and (max-width: 1919px) {
+            .quiz-container {
+                padding: 2rem;
+                max-width: 900px;
+            }
+            .laptop-text {
+                font-size: 1.375rem;
+            }
+            .laptop-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Βελτιστοποίηση για Smart TVs */
+        @media (min-width: 1920px) {
+            .quiz-container {
+                padding: 3rem;
+                max-width: 1400px;
+            }
+            .tv-text {
+                font-size: 1.75rem;
+            }
+            .tv-title {
+                font-size: 3.5rem;
+            }
+            .tv-button {
+                padding: 1.5rem 2rem;
+                font-size: 1.5rem;
+            }
+            .tv-choice {
+                padding: 1.5rem;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Βελτιστοποίηση για οριζόντια smartphones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .landscape-optimized {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            .landscape-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .landscape-question {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+            .landscape-choices {
+                margin-top: 0.5rem;
+            }
+            .landscape-button {
+                padding: 0.5rem;
+                margin-top: 0.5rem;
+            }
+        }
     </style>
 </head>
-<body class="p-4 flex items-center justify-center min-h-screen">
+<body class="p-2 sm:p-4 flex items-center justify-center min-h-screen">
 
-    <div id="quiz-app" class="quiz-container w-full max-w-xl bg-white p-6 md:p-10 rounded-xl">
+    <div id="quiz-app" class="quiz-container bg-white rounded-xl">
         
         <!-- Τίτλος -->
-        <h1 class="text-3xl md:text-4xl font-bold text-primary-blue text-center mb-6 border-b-2 border-secondary-gold pb-3">
+        <h1 class="mobile-title tablet-title laptop-title tv-title font-bold text-primary-blue text-center mb-4 sm:mb-6 border-b-2 border-secondary-gold pb-2 sm:pb-3 landscape-title">
             Κουίζ: Η Αχίλλειος Κληρονομιά
         </h1>
 
         <!-- Πίνακας Παιχνιδιού (Game Container) -->
-        <div id="game-container">
+        <div id="game-container" class="landscape-optimized">
             
             <!-- Εμφάνιση Ερώτησης και Δείκτη -->
-            <div class="mb-6">
-                <p id="question-index" class="text-sm font-medium text-gray-500 mb-2"></p>
-                <div id="question-text" class="text-xl font-semibold text-gray-800 p-4 bg-gray-50 rounded-lg shadow-inner">
+            <div class="mb-4 sm:mb-6 landscape-optimized">
+                <p id="question-index" class="text-sm sm:text-base font-medium text-gray-500 mb-1 sm:mb-2"></p>
+                <div id="question-text" class="mobile-text tablet-text laptop-text tv-text font-semibold text-gray-800 p-3 sm:p-4 bg-gray-50 rounded-lg shadow-inner landscape-question">
                     <!-- Το κείμενο της ερώτησης θα εισαχθεί εδώ -->
                 </div>
             </div>
 
             <!-- Επιλογές Απάντησης -->
-            <div id="choices-container" class="grid grid-cols-1 gap-3">
+            <div id="choices-container" class="grid grid-cols-1 gap-2 sm:gap-3 landscape-choices">
                 <!-- Τα κουμπιά επιλογών θα εισαχθούν εδώ -->
             </div>
 
             <!-- Μήνυμα Σωστού/Λάθους -->
-            <div id="feedback-message" class="mt-4 text-center font-bold h-6">
+            <div id="feedback-message" class="mt-3 sm:mt-4 text-center font-bold text-sm sm:text-base h-5 sm:h-6">
                 <!-- Εδώ εμφανίζεται το μήνυμα επιβεβαίωσης -->
             </div>
 
             <!-- Κουμπιά Πλοήγησης -->
-            <div class="flex space-x-4 mt-6">
+            <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-4 sm:mt-6 landscape-button">
                 <!-- Κουμπί Προηγούμενης Ερώτησης -->
-                <button id="prev-button" onclick="goToPreviousQuestion()" class="flex-1 py-3 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 disabled:opacity-50 transition-colors" disabled>
+                <button id="prev-button" onclick="goToPreviousQuestion()" class="py-2 sm:py-3 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 disabled:opacity-50 transition-colors tv-button" disabled>
                     Προηγούμενη Ερώτηση
                 </button>
                 
                 <!-- Κουμπί Επόμενης Ερώτησης -->
-                <button id="next-button" onclick="goToNextQuestion()" class="flex-1 py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50 transition-colors" disabled>
+                <button id="next-button" onclick="goToNextQuestion()" class="py-2 sm:py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50 transition-colors tv-button" disabled>
                     Επόμενη Ερώτηση
                 </button>
             </div>
 
             <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα -->
-            <div class="text-center mt-4">
-                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-3 px-6 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
+            <div class="text-center mt-3 sm:mt-4 landscape-button">
+                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors tv-button">
                     Επιστροφή στην Κεντρική Σελίδα
                 </a>
             </div>
@@ -113,21 +212,21 @@
         </div>
 
         <!-- Οθόνη Αποτελεσμάτων -->
-        <div id="results-container" class="hidden text-center p-6 bg-gray-50 rounded-lg">
-            <h2 class="text-3xl font-extrabold text-primary-blue mb-4">Τα Αποτελέσματα σου!</h2>
-            <p class="text-6xl font-black text-secondary-gold score-shadow" id="final-score"></p>
-            <p class="text-xl text-gray-700 mt-2" id="score-text"></p>
+        <div id="results-container" class="hidden text-center p-4 sm:p-6 bg-gray-50 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl tv-title font-extrabold text-primary-blue mb-3 sm:mb-4">Τα Αποτελέσματα σου!</h2>
+            <p class="text-4xl sm:text-5xl tv:text-6xl font-black text-secondary-gold score-shadow" id="final-score"></p>
+            <p class="text-lg sm:text-xl tv-text text-gray-700 mt-2" id="score-text"></p>
             
             <!-- Κουμπιά Πλοήγησης στην Οθόνη Αποτελεσμάτων -->
-            <div class="flex space-x-4 mt-6">
-                <button onclick="startGame()" class="flex-1 py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-4 sm:mt-6">
+                <button onclick="startGame()" class="py-2 sm:py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors tv-button">
                     Ξανά Δοκιμή!
                 </button>
             </div>
             
             <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα στην Οθόνη Αποτελεσμάτων -->
-            <div class="text-center mt-4">
-                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-3 px-6 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+            <div class="text-center mt-3 sm:mt-4">
+                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition-colors tv-button">
                     Επιστροφή στην Κεντρική Σελίδα
                 </a>
             </div>
@@ -165,8 +264,8 @@
             },
             {
                 q: "6. Ποιο ήταν το μοναδικό τρωτό σημείο του Αχιλλέα, το οποίο τιμάται με γλυπτό στα Φάρσαλα;",
-                choices: ["Ο λαιμός", "Το γόνατο", "Η φτέρνα (Αχίλλειος Πτέρνα)"],
-                answer: "Η φτέρνα (Αχίλλειος Πτέρνα)"
+                choices: ["Ο λαιμός", "Το γόνατο", "Η Φτέρνα"],
+                answer: "Η Φτέρνα"
             },
             {
                 q: "7. Ποιος ήταν ο σοφός Κένταυρος που ανέλαβε τη διαπαιδαγώγηση του Αχιλλέα;",
@@ -210,7 +309,7 @@
             },
             {
                 q: "15. Πώς ονομάζεται η ομάδα φιλάθλων του τοπικού αθλητικού συλλόγου «Αχιλλέας Φαρσάλων»;",
-                choices: ["Οι Αχαιοί", "Οι Θεσσαλοί", "Οι Μυрμιδόνες"],
+                choices: ["Οι Αχαιοί", "Οι Θεσσαλοί", "Οι Μυρμιδόνες"],
                 answer: "Οι Μυρμιδόνες"
             }
         ];
@@ -267,7 +366,7 @@
             currentQ.choices.forEach(choice => {
                 const button = document.createElement('button');
                 button.textContent = choice;
-                button.className = 'answer-button w-full py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium text-lg hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold';
+                button.className = 'answer-button w-full py-2 sm:py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium mobile-text tablet-text laptop-text tv-text tv-choice hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold';
                 
                 // Ελέγχουμε αν ο χρήστης έχει ήδη απαντήσει σε αυτή την ερώτηση
                 if (userAnswers[currentQuestionIndex] === choice) {
