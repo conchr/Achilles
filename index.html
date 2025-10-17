@@ -90,10 +90,25 @@
                 <!-- Εδώ εμφανίζεται το μήνυμα επιβεβαίωσης -->
             </div>
 
-            <!-- Κουμπί Επόμενης Ερώτησης -->
-            <button id="next-button" onclick="nextQuestion()" class="w-full mt-6 py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50" disabled>
-                Επόμενη Ερώτηση &raquo;
-            </button>
+            <!-- Κουμπιά Πλοήγησης -->
+            <div class="flex space-x-4 mt-6">
+                <!-- Κουμπί Προηγούμενης Ερώτησης -->
+                <button id="prev-button" onclick="goToPreviousQuestion()" class="flex-1 py-3 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 disabled:opacity-50 transition-colors" disabled>
+                    Προηγούμενη Ερώτηση
+                </button>
+                
+                <!-- Κουμπί Επόμενης Ερώτησης -->
+                <button id="next-button" onclick="goToNextQuestion()" class="flex-1 py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50 transition-colors" disabled>
+                    Επόμενη Ερώτηση
+                </button>
+            </div>
+
+            <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα -->
+            <div class="text-center mt-4">
+                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-3 px-6 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
+                    Επιστροφή στην Κεντρική Σελίδα
+                </a>
+            </div>
 
         </div>
 
@@ -102,9 +117,20 @@
             <h2 class="text-3xl font-extrabold text-primary-blue mb-4">Τα Αποτελέσματα σου!</h2>
             <p class="text-6xl font-black text-secondary-gold score-shadow" id="final-score"></p>
             <p class="text-xl text-gray-700 mt-2" id="score-text"></p>
-            <button onclick="startGame()" class="w-full mt-6 py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600">
-                Ξανά Δοκιμή!
-            </button>
+            
+            <!-- Κουμπιά Πλοήγησης στην Οθόνη Αποτελεσμάτων -->
+            <div class="flex space-x-4 mt-6">
+                <button onclick="startGame()" class="flex-1 py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
+                    Ξανά Δοκιμή!
+                </button>
+            </div>
+            
+            <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα στην Οθόνη Αποτελεσμάτων -->
+            <div class="text-center mt-4">
+                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-3 px-6 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                    Επιστροφή στην Κεντρική Σελίδα
+                </a>
+            </div>
         </div>
 
     </div>
@@ -184,7 +210,7 @@
             },
             {
                 q: "15. Πώς ονομάζεται η ομάδα φιλάθλων του τοπικού αθλητικού συλλόγου «Αχιλλέας Φαρσάλων»;",
-                choices: ["Οι Αχαιοί", "Οι Θεσσαλοί", "Οι Μυρμιδόνες"],
+                choices: ["Οι Αχαιοί", "Οι Θεσσαλοί", "Οι Μυрμιδόνες"],
                 answer: "Οι Μυρμιδόνες"
             }
         ];
@@ -192,6 +218,7 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let answered = false;
+        let userAnswers = []; // Αποθήκευση απαντήσεων χρήστη
 
         // Στοιχεία DOM
         const gameContainer = document.getElementById('game-container');
@@ -201,6 +228,7 @@
         const choicesContainer = document.getElementById('choices-container');
         const feedbackMessageElement = document.getElementById('feedback-message');
         const nextButton = document.getElementById('next-button');
+        const prevButton = document.getElementById('prev-button');
         const finalScoreElement = document.getElementById('final-score');
         const scoreTextElement = document.getElementById('score-text');
 
@@ -210,8 +238,10 @@
         function startGame() {
             currentQuestionIndex = 0;
             score = 0;
+            userAnswers = new Array(questions.length).fill(null);
             gameContainer.classList.remove('hidden');
             resultsContainer.classList.add('hidden');
+            updateNavigationButtons();
             displayQuestion();
         }
 
@@ -238,9 +268,38 @@
                 const button = document.createElement('button');
                 button.textContent = choice;
                 button.className = 'answer-button w-full py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium text-lg hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold';
+                
+                // Ελέγχουμε αν ο χρήστης έχει ήδη απαντήσει σε αυτή την ερώτηση
+                if (userAnswers[currentQuestionIndex] === choice) {
+                    button.classList.add('disabled');
+                    if (choice === currentQ.answer) {
+                        button.classList.add('correct');
+                    } else {
+                        button.classList.add('wrong');
+                    }
+                }
+                
                 button.onclick = () => checkAnswer(choice, button);
                 choicesContainer.appendChild(button);
             });
+
+            updateNavigationButtons();
+        }
+
+        /**
+         * Ενημερώνει την κατάσταση των κουμπιών πλοήγησης.
+         */
+        function updateNavigationButtons() {
+            // Κουμπί Προηγούμενης Ερώτησης
+            prevButton.disabled = currentQuestionIndex === 0;
+            
+            // Κουμπί Επόμενης Ερώτησης
+            nextButton.textContent = "Επόμενη Ερώτηση";
+            
+            // Στην τελευταία ερώτηση αλλάζουμε το κείμενο
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.textContent = "Τέλος Κουίζ";
+            }
         }
 
         /**
@@ -254,6 +313,9 @@
 
             const currentQ = questions[currentQuestionIndex];
             const isCorrect = selectedChoice === currentQ.answer;
+
+            // Αποθήκευση της απάντησης του χρήστη
+            userAnswers[currentQuestionIndex] = selectedChoice;
 
             // Ενεργοποίηση του κουμπιού Επόμενης Ερώτησης
             nextButton.disabled = false;
@@ -285,9 +347,23 @@
         /**
          * Μεταβαίνει στην επόμενη ερώτηση ή στα αποτελέσματα.
          */
-        function nextQuestion() {
-            currentQuestionIndex++;
-            displayQuestion();
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Μεταβαίνει στην προηγούμενη ερώτηση.
+         */
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
         }
 
         /**
@@ -314,6 +390,26 @@
             }
             scoreTextElement.textContent = message;
         }
+
+        /**
+         * Χειρισμός πλήκτρων πληκτρολογίου
+         */
+        function handleKeyDown(event) {
+            // Ελέγχουμε αν είμαστε στη σελίδα των ερωτήσεων
+            if (!gameContainer.classList.contains('hidden')) {
+                // Βελάκι αριστερά (37) - Προηγούμενη ερώτηση
+                if (event.keyCode === 37 && !prevButton.disabled) {
+                    goToPreviousQuestion();
+                }
+                // Βελάκι δεξιά (39) - Επόμενη ερώτηση
+                else if (event.keyCode === 39 && !nextButton.disabled) {
+                    goToNextQuestion();
+                }
+            }
+        }
+
+        // Προσθήκη ακροατών συμβάντων
+        document.addEventListener('keydown', handleKeyDown);
 
         // Έναρξη του παιχνιδιού με τη φόρτωση της σελίδας
         window.onload = startGame;
