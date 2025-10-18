@@ -16,12 +16,25 @@
                         'secondary-gold': '#FBBF24', // Χρυσό
                         'tertiary-red': '#DC2626', // Κόκκινο (για λάθος)
                         'success-green': '#10B981', // Πράσινο (για σωστό)
+                        'papyrus-light': '#F5EBD4',
+                        'papyrus-dark': '#E8D9B5',
+                        'ancient-bg': '#2C5530', // Πράσινο για το background
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
                     screens: {
                         'tv': '1920px', // Smart TV support
+                        '4k': '3840px', // 4K screens
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
                     }
                 }
             }
@@ -31,18 +44,30 @@
         /* Προσαρμοσμένες κλάσεις για το κουίζ */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #E0F2F1, #B2DFDB); /* Απαλή διαβάθμιση φόντου */
+            background: 
+                /* Βασικό χρώμα - απαλό πράσινο */
+                linear-gradient(135deg, #2C5530 0%, #4A7C59 100%);
             min-height: 100vh;
         }
         .quiz-container {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease-in-out;
             width: 95%;
             max-width: 1200px;
             margin: 1rem auto;
+            background: 
+                /* Βασικό χρώμα πάπυρου */
+                linear-gradient(135deg, #F5EBD4 0%, #E8D9B5 100%),
+                /* Υφή πάπυρου */
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4c7a5' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+            border: 1px solid #d4c7a5;
         }
         .answer-button {
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            opacity: 0;
+        }
+        .answer-button.visible {
+            opacity: 1;
         }
         .answer-button:hover:not(.disabled) {
             transform: translateY(-2px);
@@ -135,6 +160,29 @@
             }
         }
         
+        /* Βελτιστοποίηση για 4K screens */
+        @media (min-width: 3840px) {
+            .quiz-container {
+                padding: 4rem;
+                max-width: 2000px;
+            }
+            .text-4k {
+                font-size: 2.5rem;
+            }
+            .title-4k {
+                font-size: 5rem;
+            }
+            .button-4k {
+                padding: 2rem 3rem;
+                font-size: 2rem;
+            }
+            .choice-4k {
+                padding: 2rem;
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+        
         /* Βελτιστοποίηση για οριζόντια smartphones */
         @media (max-height: 500px) and (orientation: landscape) {
             .landscape-optimized {
@@ -157,14 +205,44 @@
                 margin-top: 0.5rem;
             }
         }
+        
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        .question-animation {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out 0s forwards;
+        }
+        
+        .choice-1-animation {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out 1s forwards;
+        }
+        
+        .choice-2-animation {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out 2s forwards;
+        }
+        
+        .choice-3-animation {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out 3s forwards;
+        }
+        
+        /* Διαφορετικές θέσεις για τις επιλογές */
+        .position-1 { order: 1; }
+        .position-2 { order: 2; }
+        .position-3 { order: 3; }
     </style>
 </head>
 <body class="p-2 sm:p-4 flex items-center justify-center min-h-screen">
 
-    <div id="quiz-app" class="quiz-container bg-white rounded-xl">
+    <div id="quiz-app" class="quiz-container rounded-xl">
         
         <!-- Τίτλος -->
-        <h1 class="mobile-title tablet-title laptop-title tv-title font-bold text-primary-blue text-center mb-4 sm:mb-6 border-b-2 border-secondary-gold pb-2 sm:pb-3 landscape-title">
+        <h1 class="mobile-title tablet-title laptop-title tv-title title-4k font-bold text-primary-blue text-center mb-4 sm:mb-6 border-b-2 border-secondary-gold pb-2 sm:pb-3 landscape-title">
             Κουίζ: Η Αχίλλειος Κληρονομιά
         </h1>
 
@@ -173,8 +251,8 @@
             
             <!-- Εμφάνιση Ερώτησης και Δείκτη -->
             <div class="mb-4 sm:mb-6 landscape-optimized">
-                <p id="question-index" class="text-sm sm:text-base font-medium text-gray-500 mb-1 sm:mb-2"></p>
-                <div id="question-text" class="mobile-text tablet-text laptop-text tv-text font-semibold text-gray-800 p-3 sm:p-4 bg-gray-50 rounded-lg shadow-inner landscape-question">
+                <p id="question-index" class="text-sm sm:text-base text-4k font-medium text-gray-500 mb-1 sm:mb-2"></p>
+                <div id="question-text" class="mobile-text tablet-text laptop-text tv-text text-4k font-semibold text-gray-800 p-3 sm:p-4 bg-papyrus-light rounded-lg shadow-inner landscape-question">
                     <!-- Το κείμενο της ερώτησης θα εισαχθεί εδώ -->
                 </div>
             </div>
@@ -185,50 +263,63 @@
             </div>
 
             <!-- Μήνυμα Σωστού/Λάθους -->
-            <div id="feedback-message" class="mt-3 sm:mt-4 text-center font-bold text-sm sm:text-base h-5 sm:h-6">
+            <div id="feedback-message" class="mt-3 sm:mt-4 text-center font-bold text-sm sm:text-base text-4k h-5 sm:h-6">
                 <!-- Εδώ εμφανίζεται το μήνυμα επιβεβαίωσης -->
             </div>
 
-            <!-- Κουμπιά Πλοήγησης -->
-            <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-4 sm:mt-6 landscape-button">
-                <!-- Κουμπί Προηγούμενης Ερώτησης -->
-                <button id="prev-button" onclick="goToPreviousQuestion()" class="py-2 sm:py-3 px-4 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 disabled:opacity-50 transition-colors tv-button" disabled>
+            <!-- Κουμπιά Πλοήγησης - ΣΤΗΝ ΙΔΙΑ ΣΕΙΡΑ -->
+            <div class="flex justify-between items-center mt-4 sm:mt-6 landscape-button">
+                <!-- Κουμπί Προηγούμενης Ερώτησης - ΑΡΙΣΤΕΡΑ -->
+                <button id="prev-button" onclick="goToPreviousQuestion()" class="py-2 sm:py-3 px-4 tv-button button-4k bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 disabled:opacity-50 transition-colors" disabled>
                     Προηγούμενη Ερώτηση
                 </button>
                 
-                <!-- Κουμπί Επόμενης Ερώτησης -->
-                <button id="next-button" onclick="goToNextQuestion()" class="py-2 sm:py-3 px-4 bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50 transition-colors tv-button" disabled>
+                <!-- Κουμπί Επόμενης Ερώτησης - ΔΕΞΙΑ -->
+                <button id="next-button" onclick="goToNextQuestion()" class="py-2 sm:py-3 px-4 tv-button button-4k bg-primary-blue text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 disabled:opacity-50 transition-colors" disabled>
                     Επόμενη Ερώτηση
                 </button>
             </div>
 
             <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα -->
             <div class="text-center mt-3 sm:mt-4 landscape-button">
-                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors tv-button">
+                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 tv-button button-4k bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
                     Επιστροφή στην Κεντρική Σελίδα
                 </a>
+            </div>
+
+            <!-- Υποσφράγιση Δήμου Φαρσάλων -->
+            <div class="text-center mt-6 sm:mt-8 pt-4 border-t border-gray-300">
+                <p class="text-xs sm:text-sm text-gray-600 font-medium">ΔΗΜΟΣ ΦΑΡΣΑΛΩΝ 2025</p>
             </div>
 
         </div>
 
         <!-- Οθόνη Αποτελεσμάτων -->
-        <div id="results-container" class="hidden text-center p-4 sm:p-6 bg-gray-50 rounded-lg">
-            <h2 class="text-2xl sm:text-3xl tv-title font-extrabold text-primary-blue mb-3 sm:mb-4">Τα Αποτελέσματα σου!</h2>
-            <p class="text-4xl sm:text-5xl tv:text-6xl font-black text-secondary-gold score-shadow" id="final-score"></p>
-            <p class="text-lg sm:text-xl tv-text text-gray-700 mt-2" id="score-text"></p>
+        <div id="results-container" class="hidden text-center p-4 sm:p-6 bg-papyrus-light rounded-lg">
+            <h2 class="text-2xl sm:text-3xl tv-title title-4k font-extrabold text-primary-blue mb-3 sm:mb-4">Τα Αποτελέσματα σου!</h2>
+            <p class="text-4xl sm:text-5xl tv:text-6xl text-4k font-black text-secondary-gold score-shadow" id="final-score"></p>
+            <p class="text-lg sm:text-xl tv-text text-4k text-gray-700 mt-2" id="score-text"></p>
             
             <!-- Κουμπιά Πλοήγησης στην Οθόνη Αποτελεσμάτων -->
-            <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-4 sm:mt-6">
-                <button onclick="startGame()" class="py-2 sm:py-3 px-4 bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors tv-button">
-                    Ξανά Δοκιμή!
-                </button>
+            <div class="flex flex-col space-y-3 sm:space-y-4 mt-4 sm:mt-6">
+                <!-- Κουμπί Ξανά Δοκιμή! - ΚΕΝΤΡΟ ΠΑΝΩ -->
+                <div class="text-center">
+                    <button onclick="startGame()" class="py-2 sm:py-3 px-4 tv-button button-4k bg-secondary-gold text-primary-blue font-bold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
+                        Ξανά Δοκιμή!
+                    </button>
+                </div>
+                
+                <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα - ΚΕΝΤΡΟ ΚΑΤΩ -->
+                <div class="text-center">
+                    <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 tv-button button-4k bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                        Επιστροφή στην Κεντρική Σελίδα
+                    </a>
+                </div>
             </div>
-            
-            <!-- Κουμπί Επιστροφής στην Κεντρική Σελίδα στην Οθόνη Αποτελεσμάτων -->
-            <div class="text-center mt-3 sm:mt-4">
-                <a href="https://conchr.github.io/Farsala-Center-Page/" class="inline-block py-2 sm:py-3 px-4 sm:px-6 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 transition-colors tv-button">
-                    Επιστροφή στην Κεντρική Σελίδα
-                </a>
+
+            <!-- Υποσφράγιση Δήμου Φαρσάλων -->
+            <div class="text-center mt-6 sm:mt-8 pt-4 border-t border-gray-300">
+                <p class="text-xs sm:text-sm text-gray-600 font-medium">ΔΗΜΟΣ ΦΑΡΣΑΛΩΝ 2025</p>
             </div>
         </div>
 
@@ -318,6 +409,7 @@
         let score = 0;
         let answered = false;
         let userAnswers = []; // Αποθήκευση απαντήσεων χρήστη
+        let animationTimeouts = []; // Για να αποθηκεύουμε τα timeouts των animations
 
         // Στοιχεία DOM
         const gameContainer = document.getElementById('game-container');
@@ -348,6 +440,10 @@
          * Εμφανίζει την τρέχουσα ερώτηση και τις επιλογές.
          */
         function displayQuestion() {
+            // Καθαρίζουμε τα προηγούμενα timeouts
+            animationTimeouts.forEach(timeout => clearTimeout(timeout));
+            animationTimeouts = [];
+            
             answered = false;
             nextButton.disabled = true;
             feedbackMessageElement.textContent = '';
@@ -362,11 +458,28 @@
             
             questionIndexElement.textContent = `Ερώτηση ${currentQuestionIndex + 1} / ${questions.length}`;
             questionTextElement.textContent = currentQ.q;
+            
+            // Εμφάνιση ερώτησης με fade-in
+            questionTextElement.style.opacity = '0';
+            setTimeout(() => {
+                questionTextElement.style.opacity = '1';
+                questionTextElement.style.transition = 'opacity 1s ease-in-out';
+            }, 0);
 
-            currentQ.choices.forEach(choice => {
+            // Ανακατεύουμε τις επιλογές για τυχαία σειρά εμφάνισης
+            const shuffledChoices = [...currentQ.choices].sort(() => Math.random() - 0.5);
+            
+            // Δημιουργούμε τα κουμπιά επιλογών αλλά τα κρατάμε κρυφά αρχικά
+            shuffledChoices.forEach((choice, index) => {
                 const button = document.createElement('button');
                 button.textContent = choice;
-                button.className = 'answer-button w-full py-2 sm:py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium mobile-text tablet-text laptop-text tv-text tv-choice hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold';
+                button.className = `answer-button w-full py-2 sm:py-3 px-4 text-primary-blue bg-white border-2 border-primary-blue rounded-lg font-medium mobile-text tablet-text laptop-text tv-text text-4k choice-4k tv-choice hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-secondary-gold`;
+                button.style.opacity = '0';
+                
+                // Προσθέτουμε τυχαία θέση για κάθε επιλογή
+                const positions = ['position-1', 'position-2', 'position-3'];
+                const shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+                button.classList.add(shuffledPositions[index]);
                 
                 // Ελέγχουμε αν ο χρήστης έχει ήδη απαντήσει σε αυτή την ερώτηση
                 if (userAnswers[currentQuestionIndex] === choice) {
@@ -380,6 +493,14 @@
                 
                 button.onclick = () => checkAnswer(choice, button);
                 choicesContainer.appendChild(button);
+                
+                // Προγραμματίζουμε την εμφάνιση κάθε επιλογής με καθυστέρηση 1 δευτερόλεπτο
+                const timeout = setTimeout(() => {
+                    button.style.transition = 'opacity 1s ease-in-out';
+                    button.style.opacity = '1';
+                    button.classList.add('visible');
+                }, 1000 + (index * 1000)); // 1s μετά την ερώτηση + 1s για κάθε επόμενη επιλογή
+                animationTimeouts.push(timeout);
             });
 
             updateNavigationButtons();
